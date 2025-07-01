@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Card Carousel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Your HTML content -->
+  <div class="carousel-container">
+    <div class="carousel">
+      <div class="card" data-info="info1">
+        <img src="https://i.imgur.com/4jah1Qr.png" alt="Platinum MasterCard">
+      </div>
+      <div class="card" data-info="info2">
+        <img src="https://i.imgur.com/rzlUygt.png" alt="Instant Debit MasterCard">
+      </div>
+      <div class="card" data-info="info3">
+        <img src="https://i.imgur.com/8Ac7FQL.png" alt="Dollar Debit MasterCard">
+      </div>
+    </div>
+  </div>
+
+  <div class="card-info">
+    <div id="info1" class="info-content active">Experience premium banking with the Platinum MasterCard from GTBank Tanzania. Enjoy higher transaction limits, worldwide acceptance, and secure transactions with Chip and PIN technology.</div>
+    <div id="info2" class="info-content">Get instant access to your funds with the Instant Debit MasterCard. Perfect for everyday transactions, both locally and globally, with no waiting time.</div>
+    <div id="info3" class="info-content">Streamline your international transactions with the Dollar Debit MasterCard. Access funds worldwide in USD with no transaction limits.</div>
+  </div>
+
+  <div class="carousel-controls">
+    <button id="prevBtn">Prev</button>
+    <button id="nextBtn">Next</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
