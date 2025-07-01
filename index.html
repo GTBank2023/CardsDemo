@@ -1,24 +1,181 @@
-<div class="carousel-container">
-    <div class="carousel">
-        <div class="card" data-info="info1">
-            <img src="https://i.imgur.com/4jah1Qr.png" alt="Platinum MasterCard">
-        </div>
-        <div class="card" data-info="info2">
-            <img src="https://i.imgur.com/rzlUygt.png" alt="Instant Debit MasterCard">
-        </div>
-        <div class="card" data-info="info3">
-            <img src="https://i.imgur.com/8Ac7FQL.png" alt="Dollar Debit MasterCard">
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loan Lab: Build Your Perfect Loan</title>
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      padding: 40px;
+      color: #333;
+    }
+    .loan-lab {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    select, input[type="range"] {
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    output {
+      display: block;
+      margin-top: 5px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      background: #3498db;
+      color: white;
+      padding: 12px;
+      margin-top: 25px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .btn:hover { background: #2980b9; }
+    .match-result {
+      margin-top: 30px;
+      padding: 20px;
+      background: #eef5ff;
+      border-left: 5px solid #3498db;
+      border-radius: 10px;
+      display: none;
+    }
+    .match-result h3 {
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="loan-lab">
+    <h1>Loan Lab</h1>
+
+    <label for="loanType">I need a loan for…</label>
+    <select id="loanType">
+      <option value="personal">Personal Needs</option>
+      <option value="business">Business Growth</option>
+    </select>
+
+    <div id="loanInputs"></div>
+
+    <button class="btn" onclick="matchLoan()">Find My Match</button>
+
+    <div class="match-result" id="result">
+      <h3 id="matchTitle"></h3>
+      <p id="matchDescription"></p>
     </div>
-</div>
+  </div>
 
-<div class="card-info">
-    <div id="info1" class="info-content active">Experience premium banking with the Platinum MasterCard from GTBank Tanzania. Enjoy higher transaction limits, worldwide acceptance, and secure transactions with Chip and PIN technology.</div>
-    <div id="info2" class="info-content">Get instant access to your funds with the Instant Debit MasterCard. Perfect for everyday transactions, both locally and globally, with no waiting time.</div>
-    <div id="info3" class="info-content">Streamline your international transactions with the Dollar Debit MasterCard. Access funds worldwide in USD with no transaction limits.</div>
-</div>
+  <script>
+    const loanTypeSelect = document.getElementById('loanType');
+    const loanInputs = document.getElementById('loanInputs');
+    const result = document.getElementById('result');
+    const matchTitle = document.getElementById('matchTitle');
+    const matchDescription = document.getElementById('matchDescription');
 
-<div class="carousel-controls">
-    <button id="prevBtn">Prev</button>
-    <button id="nextBtn">Next</button>
-</div>
+    const templates = {
+      personal: `
+        <label for="purpose">Purpose:</label>
+        <select id="purpose">
+          <option value="emergency">Emergency Cash</option>
+          <option value="education">School Fees</option>
+          <option value="health">Health</option>
+          <option value="rent">Rent / Bills</option>
+        </select>
+        <label for="amount">Amount Needed (₦):</label>
+        <input type="range" id="amount" min="100000" max="2000000" step="100000" oninput="amountOut.value = this.value">
+        <output id="amountOut">100000</output>
+        <label for="duration">Repayment Duration (months):</label>
+        <input type="range" id="duration" min="3" max="24" step="3" oninput="durationOut.value = this.value">
+        <output id="durationOut">3</output>
+      `,
+      business: `
+        <label for="bizType">Business Type:</label>
+        <select id="bizType">
+          <option value="sme">Registered SME</option>
+          <option value="contractor">Contractor (Invoice-based)</option>
+          <option value="micro">Informal Micro Business</option>
+        </select>
+        <label for="useCase">Use Case:</label>
+        <select id="useCase">
+          <option value="working">Working Capital</option>
+          <option value="asset">Asset Purchase</option>
+          <option value="invoice">Invoice Discount</option>
+        </select>
+        <label for="bizAmount">Loan Size (₦):</label>
+        <input type="range" id="bizAmount" min="500000" max="10000000" step="500000" oninput="bizAmountOut.value = this.value">
+        <output id="bizAmountOut">500000</output>
+      `
+    };
+
+    function updateInputs() {
+      loanInputs.innerHTML = templates[loanTypeSelect.value];
+      result.style.display = 'none';
+    }
+
+    function matchLoan() {
+      const type = loanTypeSelect.value;
+      let title = '', desc = '';
+
+      if (type === 'personal') {
+        const amount = +document.getElementById('amount').value;
+        const duration = +document.getElementById('duration').value;
+
+        if (amount <= 500000 && duration <= 6) {
+          title = "Personal Cash Loan";
+          desc  = "Ideal for short‑term needs like rent or emergencies. Fast approval & flexible repayment.";
+        } else {
+          title = "Term Loan";
+          desc  = "Great for larger personal expenses over a longer period, with structured installments.";
+        }
+      } else {
+        const useCase = document.getElementById('useCase').value;
+
+        if (useCase === 'invoice') {
+          title = "Invoice Discount Facility";
+          desc  = "Get quick cash by unlocking up to 70% of your confirmed invoices. Perfect for contractors.";
+        } else if (useCase === 'working') {
+          title = "Overdraft Facility";
+          desc  = "Flexible short‑term facility for working capital. Interest calculated daily on what you use.";
+        } else {
+          title = "Time Loan";
+          desc  = "Short‑term asset loan (≤12m) for inventory & equipment. Monthly interest, one principal payment.";
+        }
+      }
+
+      matchTitle.textContent = `Your Match: ${title}`;
+      matchDescription.textContent = desc;
+      result.style.display = 'block';
+    }
+
+    loanTypeSelect.addEventListener('change', updateInputs);
+    window.onload = updateInputs;
+  </script>
+
+</body>
+</html>
